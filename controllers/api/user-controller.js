@@ -1,5 +1,7 @@
+require('dotenv').config()
 const { User } = require('../../models')
 const bcrypt = require('bcryptjs')
+const jwt = require('jsonwebtoken')
 
 const userController = {
   postSignUp: async (req, res) => {
@@ -25,6 +27,23 @@ const userController = {
 
       res.json(user)
 
+    } catch (err) {
+      console.log(err)
+      res.json({ error: err.message })
+    }
+  },
+  postSignIn: (req, res) => {
+    try {
+      const userData = req.user.toJSON()
+      delete userData.password
+      const token = jwt.sign(userData, process.env.JWT_SECRET, { expiresIn: '30d' })
+      res.json({
+        status: 'success',
+        data: {
+          token,
+          user: userData
+        }
+      })
     } catch (err) {
       console.log(err)
       res.json({ error: err.message })
