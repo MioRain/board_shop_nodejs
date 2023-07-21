@@ -1,4 +1,5 @@
 const express = require('express')
+const { authenticated, authenticatedAdmin } = require('../../../../middleware/api-auth')
 const passport = require('../../../../config/passport')
 const userController = require('../../../../controllers/api/user-controller')
 const productController = require('../../../../controllers/api/product-controller')

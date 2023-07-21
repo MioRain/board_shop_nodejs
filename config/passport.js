@@ -1,8 +1,13 @@
+require('dotenv').config()
 const passport = require('passport')
 const LocalStrategy = require('passport-local')
+const passportJWT = require('passport-jwt')
 const bcrypt = require('bcryptjs')
 const db = require('../models')
 const User = db.User
+
+const JWTStrategy = passportJWT.Strategy
+const ExtractJWT = passportJWT.ExtractJwt
 
 passport.use(new LocalStrategy({
   usernameField: 'name',
@@ -16,6 +21,19 @@ passport.use(new LocalStrategy({
       return done(null, user)
   }
 ))
+
+const jwtOptions = {
+  jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
+  secretOrKey: process.env.JWT_SECRET
+}
+passport.use(new JWTStrategy(jwtOptions, async (jwtPayload, cb) => {
+  try {
+    const user = User.findByPk(jwtPayload.id)
+    cb(null, user)
+  } catch(err) {
+    cb(err)
+  }
+}))
 
 passport.serializeUser((user, done) => {
   done(null, user.id)
