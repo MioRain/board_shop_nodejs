@@ -42,7 +42,6 @@ passport.deserializeUser(async (id, done) => {
   try {
     let user = await User.findByPk(id)
     user = user.toJSON()
-    console.log(user)
     return done(null, user)
   } catch (err) {
     console.error(err)
