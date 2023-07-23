@@ -1,24 +1,34 @@
 const { Order, OrderedProduct, Product } = require('../../models')
-const { Sequelize } = require('sequelize');
-
 
 const buyerController = {
   postOrders: async (req, res) => {
     try {
+      let totalPrice = 0
       const user = req.user?.toJSON()
-      const { products } = { ...req.body?.order }
-      const productsId = products.map(item => item.id)
-      const price = await Product.findAll({
+      const { products: cartProducts } = { ...req.body }
+      const productsId = cartProducts.map(item => item.id)
+      const products = await Product.findAll({
         where: {
           id: productsId
         },
-        attributes: [[Sequelize.fn('SUM', Sequelize.col('price')), 'totalPrice']],
         raw: true
       })
 
+      const newProducts = products.map(product => {
+        const cartProduct = cartProducts.find(p => p.id === product.id)
+        if (cartProduct) {
+          totalPrice += product.price * cartProduct.amount
+          product.inventory =  product.inventory - cartProduct.amount
+          if (product.inventory < 0) throw new Error('部分商品庫存不足，請重新下單')
+        }
+        return product
+      })
+
+      if (totalPrice !== req.body?.totalPrice) throw new Error('部分商品價格可能有變更，請重新下單')
+
       const order = await Order.create({
         userId: user.id,
-        price: price[0].totalPrice
+        price: totalPrice
       })
 
       const orderedProductsToCreate = productsId.map(productId => {
@@ -27,12 +37,28 @@ const buyerController = {
           productId
         }
       })
-      
-      await OrderedProduct.bulkCreate(orderedProductsToCreate)
-      
+
+      const isCreated = await OrderedProduct.bulkCreate(orderedProductsToCreate)
+
+      if (isCreated) {
+        const updatePromises = newProducts.map(async (data) => {
+          console.log('update')
+          return await Product.update(
+            { inventory: data.inventory },
+            {
+              where: {
+                id: data.id,
+              },
+            }
+          )
+        })
+        await Promise.all(updatePromises)
+      }
+
       res.json({ order })
     } catch (err) {
-      res.json({ error: err})
+      console.log(err)
+      res.status(400).json({ message: err.message })
     }
   }
 }
