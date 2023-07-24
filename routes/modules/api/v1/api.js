@@ -16,5 +16,6 @@ router.get('/categories', categoryController.getCategories)
 router.post('/buyer/orders', authenticated, buyerController.postOrders)
 router.get('/seller/products', authenticated, authenticatedSeller, sellerController.getProducts)
 router.post('/seller/products', authenticated, authenticatedSeller, sellerController.postProducts)
+router.put('/seller/products/:id', authenticated, authenticatedSeller, sellerController.putProducts)
 
 module.exports = router
