@@ -6,11 +6,20 @@ const sellerController = {
       const products = await Product.findAll({
         where: {
           userId: req.user.id
-        } ,
+        },
         include: Category
       })
-  
+
       res.json(products)
+    } catch (err) {
+      console.log(err)
+      res.json({ error: err.message })
+    }
+  },
+  postProducts: async (req, res) => {
+    try {
+      const createdProduct = await Product.create(req.body)
+      res.json({ product: createdProduct })
     } catch (err) {
       console.log(err)
       res.json({ error: err.message })
