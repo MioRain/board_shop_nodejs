@@ -1,0 +1,21 @@
+const { Product, Category } = require('../../models')
+
+const sellerController = {
+  getProducts: async (req, res) => {
+    try {
+      const products = await Product.findAll({
+        where: {
+          userId: req.user.id
+        } ,
+        include: Category
+      })
+  
+      res.json(products)
+    } catch (err) {
+      console.log(err)
+      res.json({ error: err.message })
+    }
+  }
+}
+
+module.exports = sellerController
