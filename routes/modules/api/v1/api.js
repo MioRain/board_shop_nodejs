@@ -17,5 +17,6 @@ router.post('/buyer/orders', authenticated, buyerController.postOrders)
 router.get('/seller/products', authenticated, authenticatedSeller, sellerController.getProducts)
 router.post('/seller/products', authenticated, authenticatedSeller, sellerController.postProducts)
 router.put('/seller/products/:id', authenticated, authenticatedSeller, sellerController.putProducts)
+router.delete('/seller/products/:id', authenticated, authenticatedSeller, sellerController.deleteProducts)
 
 module.exports = router
