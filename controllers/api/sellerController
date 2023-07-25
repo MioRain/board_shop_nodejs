@@ -31,11 +31,9 @@ const sellerController = {
   },
   postProducts: async (req, res) => {
     try {
-      console.log('=============post============')
       const product = {}
       const { file } = req
       const { body } = req
-      console.log(body)
       const imagePath = await imgurFileHandler(file)
 
       if (imagePath) product.imagePath =  imagePath
@@ -55,11 +53,9 @@ const sellerController = {
   },
   putProducts: async (req, res) => {
     try {
-      console.log('=============put============')
       const product = {}
       const { file } = req
       const { body } = req
-      console.log(body)
       
       const imagePath = await imgurFileHandler(file)
 
@@ -74,7 +70,7 @@ const sellerController = {
 
       const updatedProduct =  await Product.update(product, {
         where: {
-          id: product.productId
+          id: req.params.id
         }
       })
       res.json({ message: 'success' })
