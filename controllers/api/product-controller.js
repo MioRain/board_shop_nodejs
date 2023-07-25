@@ -6,7 +6,8 @@ const productController = {
     try {
       const { filter } = req.query
       const whereCondition = {}
-  
+      whereCondition.isPublic = true
+      
       if (filter?.name) {
         whereCondition.name = {
           [Op.like]: `%${filter.name}%`

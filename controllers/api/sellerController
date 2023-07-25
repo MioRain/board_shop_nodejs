@@ -31,9 +31,11 @@ const sellerController = {
   },
   postProducts: async (req, res) => {
     try {
+      console.log('=============post============')
       const product = {}
       const { file } = req
       const { body } = req
+      console.log(body)
       const imagePath = await imgurFileHandler(file)
 
       if (imagePath) product.imagePath =  imagePath
@@ -53,6 +55,7 @@ const sellerController = {
   },
   putProducts: async (req, res) => {
     try {
+      console.log('=============put============')
       const product = {}
       const { file } = req
       const { body } = req
@@ -69,8 +72,7 @@ const sellerController = {
       product.isPublic = true :
       product.isPublic = false
 
-      const updatedProduct = await Product.create(product)
-      await Product.update(product, {
+      const updatedProduct =  await Product.update(product, {
         where: {
           id: product.productId
         }
