@@ -21,7 +21,7 @@ module.exports = {
         size: getRandomNumber(40, 50),
         price: getRandomNumber(3000, 10000),
         inventory: getRandomNumber(1,100),
-        isPublic: false,
+        isPublic: Math.random() < 0.5,
         name: faker.commerce.productName(),
         createdAt: new Date(),
         updatedAt: new Date()
