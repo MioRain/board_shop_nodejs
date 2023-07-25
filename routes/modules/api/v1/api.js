@@ -6,6 +6,8 @@ const buyerController = require('../../../../controllers/api/buyer-controller')
 const sellerController = require('../../../../controllers/api/sellerController')
 const productController = require('../../../../controllers/api/product-controller')
 const categoryController = require('../../../../controllers/api/category-controller')
+const multer = require('multer');
+const upload = multer({ dest: 'temp/' })
 const router = express.Router()
 
 router.post('/signin', passport.authenticate('local', { session: false }), userController.postSignIn)
@@ -16,8 +18,8 @@ router.get('/categories', categoryController.getCategories)
 router.post('/buyer/orders', authenticated, buyerController.postOrders)
 router.get('/seller/products', authenticated, authenticatedSeller, sellerController.getProducts)
 router.get('/seller/products/:id', authenticated, authenticatedSeller, sellerController.getProduct)
-router.post('/seller/products', authenticated, authenticatedSeller, sellerController.postProducts)
-router.put('/seller/products/:id', authenticated, authenticatedSeller, sellerController.putProducts)
+router.post('/seller/products', authenticated, authenticatedSeller, upload.single('image'), sellerController.postProducts)
+router.put('/seller/products/:id', authenticated, authenticatedSeller, upload.single('image'), sellerController.putProducts)
 router.delete('/seller/products/:id', authenticated, authenticatedSeller, sellerController.deleteProducts)
 
 module.exports = router

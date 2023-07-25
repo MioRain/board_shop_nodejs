@@ -1,4 +1,5 @@
 const { Product, Category } = require('../../models')
+const { imgurFileHandler } = require('../../helpers/file-helper')
 
 const sellerController = {
   getProducts: async (req, res) => {
@@ -30,7 +31,20 @@ const sellerController = {
   },
   postProducts: async (req, res) => {
     try {
-      const createdProduct = await Product.create(req.body)
+      const product = {}
+      const { file } = req
+      const { body } = req
+      const imagePath = await imgurFileHandler(file)
+
+      if (imagePath) product.imagePath =  imagePath
+
+      Object.entries(body).forEach(([key, value]) => {
+        if (key === 'isPublic') return product[key] = true
+        product[key] = value
+      });
+
+      const createdProduct = await Product.create(product)
+
       res.json({ product: createdProduct })
     } catch (err) {
       console.log(err)
@@ -39,7 +53,7 @@ const sellerController = {
   },
   putProducts: async (req, res) => {
     try {
-      await Product.update(req.body,{
+      await Product.update(req.body, {
         where: {
           id: req.params.id
         }
