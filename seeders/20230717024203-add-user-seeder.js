@@ -18,8 +18,8 @@ function createUsersArray(userNmae, length) {
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up (queryInterface, Sequelize) {
-    const users = createUsersArray('buyer', 10)
-    users.push(...createUsersArray('seller', 5))
+    const users = createUsersArray('buyer', 5)
+    users.push(...createUsersArray('seller', 2))
     await queryInterface.bulkInsert('Users',users, {})
   },
 

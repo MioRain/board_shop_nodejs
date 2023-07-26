@@ -11,7 +11,7 @@ module.exports = {
   async up (queryInterface, Sequelize) {
     const users = await User.findAndCountAll()
     const categories = await Category.findAndCountAll()
-    const products = Array.from({ length: 50 }, (v, i) => {
+    const products = Array.from({ length: 10 }, (v, i) => {
       const userRandomIndex = getRandomNumber(0, users.count - 1)
       const categoryRandomIndex = getRandomNumber(0, categories.count - 1)
       return {
